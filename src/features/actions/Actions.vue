@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import Button from '@/components/Button/Button.vue'
 import styles from './Actions.module.scss'
+import { useBoardStore } from "@/stores/useBoardStore.ts";
+
+const board = useBoardStore()
 </script>
 
 <template>
   <div :class="styles.root">
     <div :class="styles.actions">
-      <Button icon="plus" iconColor="blue">
+      <Button icon="plus" iconColor="blue" @click="board.addColumn">
         New Column
       </Button>
       <Button icon="shuffle" iconColor="purple">

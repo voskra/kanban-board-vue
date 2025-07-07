@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from '@/components/Button/Button.vue'
 import Card from '@/features/card/Card.vue'
+import { useBoardStore } from "@/stores/useBoardStore.ts";
 import type { Column } from '@/types/board.ts'
 
 import styles from './Column.module.scss'
@@ -8,6 +9,16 @@ import styles from './Column.module.scss'
 const props = defineProps<{
   column: Column
 }>()
+
+const board = useBoardStore()
+
+function removeColumn() {
+  const confirmed = confirm(`Are you sure you want to delete column "${props.column.name}"?`)
+
+  if (confirmed) {
+    board.removeColumn(props.column.id)
+  }
+}
 </script>
 
 <template>
@@ -23,7 +34,7 @@ const props = defineProps<{
         <Button icon="pause" iconColor="yellow">
           Disable Editing
         </Button>
-        <Button icon="minus">
+        <Button icon="minus" @click="removeColumn">
           Delete Column
         </Button>
       </div>
