@@ -4,6 +4,6 @@ import styles from './App.module.scss'
 
 <template>
   <div :class="styles.root">
-    Kanban
+
   </div>
 </template>

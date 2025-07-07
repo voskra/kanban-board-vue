@@ -1,0 +1,30 @@
+.root {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  flex-shrink: 0;
+
+  &.yellow {
+    color: $color-orange1;
+  }
+
+  &.black {
+    color: inherit;
+  }
+
+  &.blue {
+    color: $color-blue3;
+  }
+
+  &.green {
+    color: $color-green1;
+  }
+
+  &.purple {
+    color: $color-purple1;
+  }
+
+  &.red {
+    color: $color-red1;
+  }
+}

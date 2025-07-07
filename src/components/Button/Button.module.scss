@@ -1,0 +1,46 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px 4px 4px;
+  gap: 4px;
+  border: 2px solid $color-grey1;
+  border-radius: 50px;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 100%;
+
+  &:hover:not(:disabled) {
+    border-color: $color-blue3;
+  }
+
+  &.solid {
+    background-color: $color-blue2;
+    border-color: transparent;
+  }
+
+  &.outline {
+    background-color: $color-white;
+    border-color: $color-grey1;
+  }
+
+  &.ghost {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+
+    &:hover:not(:disabled) {
+      background-color: transparent;
+      color: $color-blue3;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
