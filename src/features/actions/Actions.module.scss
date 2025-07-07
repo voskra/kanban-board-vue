@@ -1,0 +1,16 @@
+.root {
+  display: flex;
+  align-items: center;
+  padding-top: $spacing-24;
+  flex-direction: column;
+  gap: $spacing-12;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-8;
+}
+
+.title {
+  color: $color-grey3;
+}

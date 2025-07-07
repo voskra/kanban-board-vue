@@ -1,0 +1,19 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 448px;
+  max-width: 650px;
+  height: 100%;
+  background-color: $color-blue1;
+  border-radius: 12px;
+  gap: $spacing-16;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-8;
+  font-size: 13px;
+}
+
