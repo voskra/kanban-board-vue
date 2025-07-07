@@ -7,7 +7,7 @@ import styles from './Board.module.scss'
 <template>
   <div :class="styles.root">
     <Column
-        v-for="col in [{id:1, name: 'name', cards: [{title: 'title', description: 'description'}]}]"
+        v-for="col in [{id:1, name: 'name', cards: [{title: 'title', description: 'description'}]},{id:1, name: 'name', cards: [{title: 'title', description: 'description'}]},{id:1, name: 'name', cards: [{title: 'title', description: 'description'}]}]"
         :key="col.id"
         :column="col"
     />
