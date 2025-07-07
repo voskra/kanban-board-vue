@@ -6,14 +6,56 @@
   max-width: 650px;
   height: 100%;
   background-color: $color-blue1;
-  border-radius: 12px;
+  border-radius: $border-sm;
   gap: $spacing-16;
+  padding: $spacing-16;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   gap: $spacing-8;
-  font-size: 13px;
 }
 
+.title {
+  font-size: 13px;
+  display: flex;
+  gap: $spacing-8;
+}
+
+.name {
+  color: $color-grey3;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-8;
+}
+
+.content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  gap: $spacing-8;
+}
+
+.cards {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.newCardButton {
+  padding: $spacing-8;
+  border-radius: $border-xs;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-8;
+}

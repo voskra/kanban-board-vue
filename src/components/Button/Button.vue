@@ -18,7 +18,7 @@ defineEmits<{
 
 <template>
   <button
-      :class="[styles.root, styles[type ?? 'outline']]"
+      :class="[styles.root, styles[type ?? 'outline'], $attrs.class]"
       :disabled="disabled"
       v-bind="$attrs"
       @click="$emit('click')"
