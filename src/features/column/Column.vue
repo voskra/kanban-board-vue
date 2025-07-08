@@ -19,6 +19,19 @@ function removeColumn() {
     board.removeColumn(props.column.id)
   }
 }
+
+function removeCard(id: string) {
+  props.column.cards = props.column.cards.filter(card => card.id !== id)
+}
+
+function addCard() {
+  props.column.cards.push({
+    id: crypto.randomUUID(),
+    title: '',
+    description: '',
+    isNew: true,
+  })
+}
 </script>
 
 <template>
@@ -43,11 +56,11 @@ function removeColumn() {
     <div :class="styles.content">
       <div :class="styles.cards">
         <template v-for="(card) in column.cards" :key="card.id">
-          <Card :card="card"/>
+          <Card :card="card" @delete="removeCard"/>
         </template>
       </div>
 
-      <Button icon="plus" iconColor="blue" type="solid" :class="styles.newCardButton">
+      <Button icon="plus" iconColor="blue" type="solid" :class="styles.newCardButton" @click="addCard">
         New Card
       </Button>
     </div>

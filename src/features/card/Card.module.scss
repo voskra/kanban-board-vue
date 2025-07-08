@@ -17,6 +17,10 @@
       display: block;
     }
   }
+
+  &.active {
+    border-color: $color-blue4;
+  }
 }
 
 .draggableButton {

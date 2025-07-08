@@ -8,10 +8,7 @@ const props = defineProps<{
   color?: IconColor
 }>()
 
-const iconComponent = defineAsyncComponent(() => {
-  console.log(props.name, props.color)
-  return import(`@/assets/icons/${props.name}.svg`)
-})
+const iconComponent = defineAsyncComponent(() => import(`@/assets/icons/${props.name}.svg`))
 </script>
 
 <template>
