@@ -58,6 +58,7 @@ function startEditing() {
 
   isEditing.value = true
   nextTick(() => {
+    titleRef.value!.innerText = props.card.title || ''
     titleRef.value?.focus()
 
     if (descRef.value) {
@@ -160,13 +161,13 @@ function onDragEnd() {
     </div>
 
     <div
-      :class="[styles.title, !isEditing && styles.display]"
-      :contenteditable="isEditing"
-      ref="titleRef"
-      @input="onTitleInput"
-      @keydown.enter.prevent
+        :class="[styles.title, !isEditing && styles.display]"
+        :contenteditable="isEditing"
+        ref="titleRef"
+        @input="onTitleInput"
+        @keydown.enter.prevent
     >
-      {{ isEditing ? editedTitle : card.title }}
+      {{ card.title }}
     </div>
     <div
       :class="[styles.description, !isEditing && styles.display]"
