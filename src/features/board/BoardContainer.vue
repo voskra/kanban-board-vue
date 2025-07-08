@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Column from '@/features/column/Column.vue'
-import styles from './Board.module.scss'
+import Column from '@/features/boardColumn/BoardColumn.vue'
+import styles from './BoardContainer.module.scss'
 import { useBoardStore } from '@/stores/useBoardStore.ts'
 
 const board = useBoardStore()

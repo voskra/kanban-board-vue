@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Button from '@/components/Button/Button.vue'
-import styles from './Actions.module.scss'
+import Button from '@/components/AppButton/AppButton.vue'
+import styles from './BoardActions.module.scss'
 import { useBoardStore } from '@/stores/useBoardStore.ts'
 
 const board = useBoardStore()

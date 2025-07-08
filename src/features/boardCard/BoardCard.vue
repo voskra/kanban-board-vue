@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, watch } from 'vue'
-import Button from '@/components/Button/Button.vue'
-import Icon from '@/components/Icon/Icon.vue'
+import Button from '@/components/AppButton/AppButton.vue'
+import Icon from '@/components/AppIcon/AppIcon.vue'
 import type { Card } from '@/types/card.ts'
-import styles from './Card.module.scss'
+import styles from './BoardCard.module.scss'
 
 const props = defineProps<{
   card: Card
@@ -76,18 +76,13 @@ function save() {
 
   editedDescription.value = descRef.value?.innerHTML || ''
 
-  const newCard = {
-    id: props.card.id || crypto.randomUUID(),
+  const updatedCard = {
+    ...props.card,
     title: editedTitle.value,
     description: editedDescription.value,
   }
 
-  if (props.isNew) {
-    emit('save', newCard)
-  } else {
-    props.card.title = newCard.title
-    props.card.description = newCard.description
-  }
+  emit('save', updatedCard)
 
   isEditing.value = false
 

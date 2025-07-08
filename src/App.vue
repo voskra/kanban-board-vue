@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Actions from '@/features/actions/Actions.vue'
-import Board from '@/features/board/Board.vue'
+import Actions from '@/features/boardActions/BoardActions.vue'
+import Board from '@/features/board/BoardContainer.vue'
 import styles from './App.module.scss'
 </script>
 

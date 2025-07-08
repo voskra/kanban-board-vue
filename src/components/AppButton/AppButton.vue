@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Icon from '@/components/Icon/Icon.vue'
-import styles from './Button.module.scss'
+import Icon from '@/components/AppIcon/AppIcon.vue'
+import styles from './AppButton.module.scss'
 import type { IconColor } from '@/types/icon.ts'
 
 defineProps<{

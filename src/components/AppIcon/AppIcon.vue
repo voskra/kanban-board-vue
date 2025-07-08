@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from 'vue'
-import styles from './Icon.module.scss'
+import styles from './AppIcon.module.scss'
 import type { IconColor } from '@/types/icon.ts'
 
 const props = defineProps<{
