@@ -4,6 +4,7 @@ import type { Card } from '@/types/card.ts'
 import { sortCardsByOrder, sortCardsByTitle } from '@/utils/sorting.ts'
 
 const initialState: State = {
+  globalDisabled: false,
   columns: [
     {
       id: 'todo',
@@ -33,6 +34,11 @@ export const useBoardStore = defineStore('board', {
   state: (): State => ({
     ...initialState,
   }),
+  getters: {
+    globalDisabled(state): boolean {
+      return state.columns.every((col) => col.disabled)
+    },
+  },
   actions: {
     addColumn(name?: string) {
       this.columns.push({
@@ -52,12 +58,18 @@ export const useBoardStore = defineStore('board', {
         column.name = name
       }
     },
-
-    toggleDisabled(columnId: string) {
+    toggleColumnDisabled(columnId: string) {
       const findingColumn = this.columns.find((column) => column.id === columnId)
       if (findingColumn) {
         findingColumn.disabled = !findingColumn.disabled
       }
+    },
+
+    toggleGlobalDisabled() {
+      const shouldDisableAll = !this.globalDisabled
+      this.columns.forEach((col) => {
+        col.disabled = shouldDisableAll
+      })
     },
 
     addCard(columnId: string, card: Card) {

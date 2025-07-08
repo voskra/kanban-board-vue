@@ -7,12 +7,8 @@ import type { Card as CardType } from '@/types/card.ts'
 
 import styles from './BoardColumn.module.scss'
 import { computed, nextTick, ref } from 'vue'
-import {
-  getNextSortOrder,
-  getSortButtonConfig,
-  sortCardsByOrder,
-  sortCardsByTitle,
-} from '@/utils/sorting.ts'
+import { getNextSortOrder, sortCardsByOrder, sortCardsByTitle } from '@/utils/sorting.ts'
+import { getDisabledButtonConfig, getSortButtonConfig } from '@/utils/buttonConfigs.ts'
 
 const props = defineProps<{
   column: Column
@@ -22,6 +18,10 @@ const editingTitle = ref(false)
 const titleRef = ref<HTMLElement | null>(null)
 const editedTitle = ref(props.column.name)
 const creatingCard = ref(false)
+
+const disabledButtonConfig = computed(() => {
+  return getDisabledButtonConfig(props.column.disabled)
+})
 
 const sortButtonConfig = computed(() => {
   return getSortButtonConfig(props.column.sort)
@@ -112,7 +112,7 @@ function onCardDelete(cardId: string) {
 
 function toggleDisabled() {
   onCardCancelled()
-  board.toggleDisabled(props.column.id)
+  board.toggleColumnDisabled(props.column.id)
 }
 
 function toggleSort() {
@@ -153,13 +153,7 @@ function clearAllCards() {
         {{ column.cards.length }}
       </div>
       <div :class="styles.actions">
-        <Button
-          :icon="column.disabled ? 'play' : 'pause'"
-          :iconColor="column.disabled ? 'green' : 'yellow'"
-          @click="toggleDisabled"
-        >
-          {{ column.disabled ? 'Unlock Column' : 'Disable Editing' }}
-        </Button>
+        <Button v-bind="disabledButtonConfig" @click="toggleDisabled" />
         <Button icon="minus" @click="removeColumn" :disabled="column.disabled">
           Delete Column
         </Button>

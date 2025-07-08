@@ -20,23 +20,3 @@ export function getNextSortOrder(current: SortOrder): SortOrder {
 export function sortCardsByOrder(cards: Card[]): Card[] {
   return [...cards].sort((a, b) => a.order - b.order)
 }
-
-export function getSortButtonConfig(order: SortOrder) {
-  switch (order) {
-    case 'asc':
-      return {
-        icon: 'sortAsc',
-        postfix: 'Ascending',
-      }
-    case 'desc':
-      return {
-        icon: 'sortDesc',
-        postfix: 'Descending',
-      }
-    default:
-      return {
-        icon: 'sort',
-        postfix: '',
-      }
-  }
-}
