@@ -1,16 +1,36 @@
 .root {
+  position: relative;
   display: flex;
   align-items: center;
   padding-top: $spacing-24;
   flex-direction: column;
   gap: $spacing-12;
+
+  &:before {
+    content: '';
+    position: absolute;
+    width: calc(100% + $spacing-24 * 2);
+    height: 100%;
+    left: -$spacing-24;
+    bottom: -$spacing-24;
+    background: linear-gradient(180deg, $color-white 0%, $color-blue2 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
 }
 
 .actions {
+  position: relative;
   display: flex;
   gap: $spacing-8;
+  z-index: 2;
 }
 
 .title {
-  color: $color-grey3;
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(180deg, $color-grey3 0%, $color-grey2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

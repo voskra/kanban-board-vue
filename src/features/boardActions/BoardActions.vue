@@ -16,8 +16,10 @@ const disabledButtonConfig = computed(() => {
   <div :class="styles.root">
     <div :class="styles.actions">
       <Button icon="plus" iconColor="blue" @click="board.addColumn"> New Column </Button>
-      <Button icon="shuffle" iconColor="purple"> Shuffle Columns </Button>
-      <Button icon="shuffle" iconColor="purple"> Shuffle Cards </Button>
+      <Button icon="shuffle" iconColor="purple" @click="board.shuffleColumns">
+        Shuffle Columns
+      </Button>
+      <Button icon="shuffle" iconColor="purple" @click="board.shuffleCards"> Shuffle Cards </Button>
       <Button v-bind="disabledButtonConfig" @click="board.toggleGlobalDisabled" />
     </div>
     <div :class="styles.title">Board Actions</div>

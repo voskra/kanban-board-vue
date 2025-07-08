@@ -2,6 +2,7 @@ import type { State } from '@/types/store.ts'
 import { defineStore } from 'pinia'
 import type { Card } from '@/types/card.ts'
 import { sortCardsByOrder, sortCardsByTitle } from '@/utils/sorting.ts'
+import { shuffleCardsInColumns, shuffleColumnsInBoard } from '@/utils/shuffle.ts'
 
 const initialState: State = {
   globalDisabled: false,
@@ -118,6 +119,14 @@ export const useBoardStore = defineStore('board', {
         findingColumn.cards = sortCardsByOrder(findingColumn.cards)
         findingColumn.sort = 'none'
       }
+    },
+
+    shuffleColumns() {
+      this.columns = shuffleColumnsInBoard(this.columns)
+    },
+
+    shuffleCards() {
+      this.columns = shuffleCardsInColumns(this.columns)
     },
   },
 })
