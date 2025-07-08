@@ -151,7 +151,7 @@ function onDragEnd() {
     @keydown="onKeydown"
     @contextmenu.prevent="onRightClick"
     tabindex="0"
-    :draggable="!isEditing"
+    :draggable="!isEditing && !disabled"
     @dragstart="onDragStart"
     @dragend="onDragEnd"
   >

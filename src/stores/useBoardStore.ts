@@ -46,7 +46,10 @@ export const useBoardStore = defineStore('board', {
     initializeBoard() {
       const columns = getColumns() ?? initialState.columns
 
-      this.columns = [...columns]
+      this.columns = columns.map((column) => ({
+        ...column,
+        lastEdited: column.lastEdited ? new Date(column.lastEdited) : undefined,
+      }))
     },
     addColumn(name?: string) {
       this.columns.push({
@@ -64,6 +67,7 @@ export const useBoardStore = defineStore('board', {
       const column = this.columns.find((c) => c.id === columnId)
       if (column) {
         column.name = name
+        column.lastEdited = new Date()
       }
     },
     toggleColumnDisabled(columnId: string) {
@@ -86,6 +90,7 @@ export const useBoardStore = defineStore('board', {
         const maxOrder = Math.max(0, ...findingColumn.cards.map((card) => card.order))
         card.order = maxOrder + 1
         findingColumn.cards.push({ ...card, id: crypto.randomUUID() })
+        findingColumn.lastEdited = new Date()
       }
     },
     updateCard(updatedCard: Card) {
@@ -96,6 +101,7 @@ export const useBoardStore = defineStore('board', {
         const index = findingColumn.cards.findIndex((card) => card.id === updatedCard.id)
         if (index !== -1) {
           findingColumn.cards[index] = updatedCard
+          findingColumn.lastEdited = new Date()
         }
       }
     },
@@ -103,12 +109,14 @@ export const useBoardStore = defineStore('board', {
       const findingColumn = this.columns.find((column) => column.cards.some((c) => c.id === cardId))
       if (findingColumn) {
         findingColumn.cards = findingColumn.cards.filter((card) => card.id !== cardId)
+        findingColumn.lastEdited = new Date()
       }
     },
     removeAllCards(columnId: string) {
       const findingColumn = this.columns.find((column) => column.id === columnId)
       if (findingColumn) {
         findingColumn.cards = []
+        findingColumn.lastEdited = new Date()
       }
     },
 
@@ -117,6 +125,7 @@ export const useBoardStore = defineStore('board', {
       if (findingColumn) {
         findingColumn.cards = sortCardsByTitle(findingColumn.cards, order)
         findingColumn.sort = order
+        findingColumn.lastEdited = new Date()
       }
     },
 
@@ -125,6 +134,7 @@ export const useBoardStore = defineStore('board', {
       if (findingColumn) {
         findingColumn.cards = sortCardsByOrder(findingColumn.cards)
         findingColumn.sort = 'none'
+        findingColumn.lastEdited = new Date()
       }
     },
 
@@ -133,7 +143,10 @@ export const useBoardStore = defineStore('board', {
     },
 
     shuffleCards() {
-      this.columns = shuffleCardsInColumns(this.columns)
+      this.columns = shuffleCardsInColumns(this.columns).map((col) => ({
+        ...col,
+        lastEdited: new Date(),
+      }))
     },
 
     setDraggedCard(card: Card | null) {

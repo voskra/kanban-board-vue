@@ -6,10 +6,11 @@ import type { Column } from '@/types/board.ts'
 import type { Card as CardType } from '@/types/card.ts'
 
 import styles from './BoardColumn.module.scss'
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { getNextSortOrder, sortCardsByOrder, sortCardsByTitle } from '@/utils/sorting.ts'
 import { getDisabledButtonConfig, getSortButtonConfig } from '@/utils/buttonConfigs.ts'
 import { calculateDropIndex, moveCard } from '@/utils/dragAndDrop.ts'
+import { formatRelativeTime } from '@/utils/time.ts'
 
 const props = defineProps<{
   column: Column
@@ -24,6 +25,20 @@ const creatingCard = ref(false)
 const isDraggingOverColumn = ref(false)
 const dropIndex = ref<number | null>(null)
 const cardListRef = ref<HTMLElement | null>(null)
+
+const now = ref(new Date())
+
+onMounted(() => {
+  const interval = setInterval(() => {
+    now.value = new Date()
+  }, 60_000)
+  onUnmounted(() => clearInterval(interval))
+})
+
+const lastEditedText = computed(() => {
+  if (!props.column.lastEdited) return ''
+  return formatRelativeTime(props.column.lastEdited, now.value)
+})
 
 const disabledButtonConfig = computed(() => {
   return getDisabledButtonConfig(props.column.disabled)
@@ -246,6 +261,7 @@ function onDragLeave(event: DragEvent) {
       >
         New Card
       </Button>
+      <p v-if="column.lastEdited" :class="styles.lastEdited">Last edit {{ lastEditedText }}</p>
     </div>
 
     <div :class="styles.footer">

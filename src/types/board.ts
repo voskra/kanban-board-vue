@@ -8,4 +8,5 @@ export interface Column {
   cards: Card[]
   disabled: boolean
   sort: SortOrder
+  lastEdited?: Date
 }
