@@ -4,10 +4,11 @@ import Button from '@/components/AppButton/AppButton.vue'
 import Icon from '@/components/AppIcon/AppIcon.vue'
 import type { Card } from '@/types/card.ts'
 import styles from './BoardCard.module.scss'
+import { useBoardStore } from '@/stores/useBoardStore.ts'
 
 const props = defineProps<{
   card: Card
-  disabled: boolean
+  disabled?: boolean
   isNew?: boolean
 }>()
 
@@ -16,6 +17,8 @@ const emit = defineEmits<{
   (e: 'save', card: Card): void
   (e: 'cancel'): void
 }>()
+
+const board = useBoardStore()
 
 const isEditing = ref(false)
 const titleRef = ref<HTMLElement | null>(null)
@@ -131,6 +134,14 @@ function onRightClick() {
     emit('delete', props.card.id)
   }
 }
+
+function onDragStart() {
+  board.setDraggedCard(props.card)
+}
+
+function onDragEnd() {
+  board.setDraggedCard(null)
+}
 </script>
 
 <template>
@@ -140,6 +151,9 @@ function onRightClick() {
     @keydown="onKeydown"
     @contextmenu.prevent="onRightClick"
     tabindex="0"
+    :draggable="!isEditing"
+    @dragstart="onDragStart"
+    @dragend="onDragEnd"
   >
     <div :class="styles.draggableButton">
       <Icon name="dragAndDrop" />

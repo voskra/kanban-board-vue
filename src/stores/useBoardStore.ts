@@ -6,6 +6,7 @@ import { shuffleCardsInColumns, shuffleColumnsInBoard } from '@/utils/shuffle.ts
 import { getColumns } from '@/utils/stateToLocalStorage.ts'
 
 const initialState: State = {
+  draggedCard: null,
   globalDisabled: false,
   columns: [
     {
@@ -43,7 +44,6 @@ export const useBoardStore = defineStore('board', {
   },
   actions: {
     initializeBoard() {
-      console.log(getColumns())
       const columns = getColumns() ?? initialState.columns
 
       this.columns = [...columns]
@@ -134,6 +134,10 @@ export const useBoardStore = defineStore('board', {
 
     shuffleCards() {
       this.columns = shuffleCardsInColumns(this.columns)
+    },
+
+    setDraggedCard(card: Card | null) {
+      this.draggedCard = card
     },
   },
 })

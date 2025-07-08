@@ -9,6 +9,7 @@ import styles from './BoardColumn.module.scss'
 import { computed, nextTick, ref } from 'vue'
 import { getNextSortOrder, sortCardsByOrder, sortCardsByTitle } from '@/utils/sorting.ts'
 import { getDisabledButtonConfig, getSortButtonConfig } from '@/utils/buttonConfigs.ts'
+import { calculateDropIndex, moveCard } from '@/utils/dragAndDrop.ts'
 
 const props = defineProps<{
   column: Column
@@ -17,7 +18,12 @@ const props = defineProps<{
 const editingTitle = ref(false)
 const titleRef = ref<HTMLElement | null>(null)
 const editedTitle = ref(props.column.name)
+
 const creatingCard = ref(false)
+
+const isDraggingOverColumn = ref(false)
+const dropIndex = ref<number | null>(null)
+const cardListRef = ref<HTMLElement | null>(null)
 
 const disabledButtonConfig = computed(() => {
   return getDisabledButtonConfig(props.column.disabled)
@@ -134,10 +140,50 @@ function clearAllCards() {
     board.removeAllCards(props.column.id)
   }
 }
+
+function onDragEnter() {
+  if (board.draggedCard) {
+    isDraggingOverColumn.value = true
+  }
+}
+
+function onDragOver(event: DragEvent) {
+  if (board.draggedCard) {
+    isDraggingOverColumn.value = true
+    dropIndex.value = calculateDropIndex(event, cardListRef.value!)
+  }
+}
+
+function onDrop() {
+  if (board.draggedCard && dropIndex.value !== null) {
+    board.columns = moveCard(board.columns, board.draggedCard, props.column.id, dropIndex.value)
+
+    board.setDraggedCard(null)
+    dropIndex.value = null
+    isDraggingOverColumn.value = false
+  }
+}
+
+function onDragLeave(event: DragEvent) {
+  const relatedTarget = event.relatedTarget as HTMLElement | null
+
+  if (relatedTarget && cardListRef.value && cardListRef.value.contains(relatedTarget)) {
+    return
+  }
+
+  isDraggingOverColumn.value = false
+  dropIndex.value = null
+}
 </script>
 
 <template>
-  <div :class="[styles.root, column.disabled && styles.disabled]">
+  <div
+    :class="[styles.root, column.disabled && styles.disabled]"
+    @dragenter="onDragEnter"
+    @dragover.prevent="onDragOver"
+    @drop="onDrop"
+    @dragleave="onDragLeave"
+  >
     <div :class="styles.header">
       <div :class="styles.title">
         <span
@@ -161,8 +207,13 @@ function clearAllCards() {
     </div>
 
     <div :class="styles.content">
-      <div :class="styles.cards">
-        <template v-for="card in sortedCards" :key="card.id">
+      <div :class="styles.cards" ref="cardListRef">
+        <template v-for="(card, index) in sortedCards" :key="card.id">
+          <div
+            data-drop-zone
+            :class="[styles.dropZone, dropIndex === index && styles.active]"
+          ></div>
+
           <Card
             :card="card"
             @delete="onCardDelete"
@@ -170,6 +221,11 @@ function clearAllCards() {
             @save="onCardUpdated"
           />
         </template>
+
+        <div
+          data-drop-zone
+          :class="[styles.dropZone, dropIndex === column.cards.length && styles.active]"
+        ></div>
 
         <Card
           v-if="creatingCard"

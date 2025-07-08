@@ -65,9 +65,23 @@
   gap: $spacing-8;
 }
 
+.dropZone {
+  height: 0;
+  margin: 0;
+  transition: all 0.2s ease;
+
+  &.active {
+    height: 16px;
+    background: $color-blue3;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+}
+
 .newCardButton {
   padding: $spacing-8;
   border-radius: $border-xs;
+  flex-shrink: 0;
 }
 
 .footer {

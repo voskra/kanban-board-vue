@@ -10,7 +10,7 @@
   background: $color-white;
   border-radius: 8px;
 
-  &:hover:not(.disabled) {
+  &:hover:not(.disabled):not(.active) {
     border-color: $color-blue4;
 
     .draggableButton {
