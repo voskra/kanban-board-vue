@@ -6,11 +6,29 @@ import type { Column } from '@/types/board.ts'
 import type { Card as CardType } from '@/types/card.ts'
 
 import styles from './BoardColumn.module.scss'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import {
+  getNextSortOrder,
+  getSortButtonConfig,
+  sortCardsByOrder,
+  sortCardsByTitle,
+} from '@/utils/sorting.ts'
 
 const props = defineProps<{
   column: Column
 }>()
+
+const sortButtonConfig = computed(() => {
+  return getSortButtonConfig(props.column.sort)
+})
+
+const sortedCards = computed(() => {
+  if (props.column.sort !== 'none') {
+    return sortCardsByTitle(props.column.cards, props.column.sort)
+  }
+
+  return sortCardsByOrder(props.column.cards)
+})
 
 const creatingCard = ref(false)
 
@@ -52,6 +70,26 @@ function onCardDelete(cardId: string) {
 function toggleDisabled() {
   board.toggleDisabled(props.column.id)
 }
+
+function toggleSort() {
+  const nextSort = getNextSortOrder(props.column.sort)
+
+  if (nextSort === 'none') {
+    board.clearColumnSort(props.column.id)
+  } else {
+    board.sortColumnCards(props.column.id, nextSort)
+  }
+}
+
+function clearAllCards() {
+  const confirmed = confirm(
+    `Are you sure you want to delete all cards in column "${props.column.name}"?`,
+  )
+
+  if (confirmed) {
+    board.removeAllCards(props.column.id)
+  }
+}
 </script>
 
 <template>
@@ -79,7 +117,7 @@ function toggleDisabled() {
 
     <div :class="styles.content">
       <div :class="styles.cards">
-        <template v-for="card in column.cards" :key="card.id">
+        <template v-for="card in sortedCards" :key="card.id">
           <Card
             :card="card"
             @delete="onCardDelete"
@@ -110,8 +148,23 @@ function toggleDisabled() {
     </div>
 
     <div :class="styles.footer">
-      <Button icon="sort" iconColor="purple" :disabled="column.disabled"> Sort </Button>
-      <Button icon="clear" iconColor="red" :disabled="column.disabled"> Clear All </Button>
+      <Button
+        :class="styles.sortButton"
+        :icon="sortButtonConfig.icon"
+        iconColor="purple"
+        :disabled="column.disabled || column.cards.length <= 1"
+        @click="toggleSort"
+      >
+        <span :class="styles.sortButtonPrefix">Sort</span> {{ sortButtonConfig.postfix }}
+      </Button>
+      <Button
+        icon="clear"
+        iconColor="red"
+        :disabled="column.disabled || !column.cards.length"
+        @click="clearAllCards"
+      >
+        Clear All
+      </Button>
     </div>
   </div>
 </template>

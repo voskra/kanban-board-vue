@@ -23,7 +23,7 @@ defineEmits<{
     v-bind="$attrs"
     @click="$emit('click')"
   >
-    <Icon v-if="icon" :name="icon" :color="iconColor" />
+    <Icon v-if="icon" :key="icon" :name="icon" :color="iconColor" />
 
     <span v-if="text">{{ text }}</span>
 

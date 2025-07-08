@@ -1,6 +1,7 @@
 import type { State } from '@/types/store.ts'
 import { defineStore } from 'pinia'
 import type { Card } from '@/types/card.ts'
+import { sortCardsByOrder, sortCardsByTitle } from '@/utils/sorting.ts'
 
 const initialState: State = {
   columns: [
@@ -9,18 +10,21 @@ const initialState: State = {
       name: 'TODO',
       cards: [],
       disabled: false,
+      sort: 'none',
     },
     {
       id: 'in-progress',
       name: 'In Progress',
       cards: [],
       disabled: false,
+      sort: 'none',
     },
     {
       id: 'done',
       name: 'Done',
       cards: [],
       disabled: false,
+      sort: 'none',
     },
   ],
 }
@@ -36,6 +40,7 @@ export const useBoardStore = defineStore('board', {
         name: name ?? '',
         cards: [],
         disabled: false,
+        sort: 'none',
       })
     },
     updateCard(updatedCard: Card) {
@@ -50,7 +55,7 @@ export const useBoardStore = defineStore('board', {
       }
     },
     removeColumn(columnId: string) {
-      this.columns = this.columns.filter((col) => col.id !== columnId)
+      this.columns = this.columns.filter((column) => column.id !== columnId)
     },
     toggleDisabled(columnId: string) {
       const findingColumn = this.columns.find((column) => column.id === columnId)
@@ -67,7 +72,31 @@ export const useBoardStore = defineStore('board', {
     addCard(columnId: string, card: Card) {
       const findingColumn = this.columns.find((column) => column.id === columnId)
       if (findingColumn) {
-        findingColumn.cards.push({...card, id: crypto.randomUUID()})
+        const maxOrder = Math.max(0, ...findingColumn.cards.map((card) => card.order))
+        card.order = maxOrder + 1
+        findingColumn.cards.push({ ...card, id: crypto.randomUUID() })
+      }
+    },
+    removeAllCards(columnId: string) {
+      const findingColumn = this.columns.find((column) => column.id === columnId)
+      if (findingColumn) {
+        findingColumn.cards = []
+      }
+    },
+
+    sortColumnCards(columnId: string, order: 'asc' | 'desc') {
+      const findingColumn = this.columns.find((column) => column.id === columnId)
+      if (findingColumn) {
+        findingColumn.cards = sortCardsByTitle(findingColumn.cards, order)
+        findingColumn.sort = order
+      }
+    },
+
+    clearColumnSort(columnId: string) {
+      const findingColumn = this.columns.find((column) => column.id === columnId)
+      if (findingColumn) {
+        findingColumn.cards = sortCardsByOrder(findingColumn.cards)
+        findingColumn.sort = 'none'
       }
     },
   },
