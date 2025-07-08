@@ -26,6 +26,7 @@
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: $spacing-8;
 }
 
@@ -33,12 +34,15 @@
   font-size: 13px;
   display: flex;
   gap: $spacing-8;
+  overflow: hidden;
 }
 
 .name {
   color: $color-grey3;
   cursor: pointer;
   text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .actions {

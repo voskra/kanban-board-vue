@@ -6,7 +6,7 @@ import type { Column } from '@/types/board.ts'
 import type { Card as CardType } from '@/types/card.ts'
 
 import styles from './BoardColumn.module.scss'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import {
   getNextSortOrder,
   getSortButtonConfig,
@@ -17,6 +17,11 @@ import {
 const props = defineProps<{
   column: Column
 }>()
+
+const editingTitle = ref(false)
+const titleRef = ref<HTMLElement | null>(null)
+const editedTitle = ref(props.column.name)
+const creatingCard = ref(false)
 
 const sortButtonConfig = computed(() => {
   return getSortButtonConfig(props.column.sort)
@@ -30,9 +35,47 @@ const sortedCards = computed(() => {
   return sortCardsByOrder(props.column.cards)
 })
 
-const creatingCard = ref(false)
-
 const board = useBoardStore()
+
+function startEditingTitle() {
+  if (props.column.disabled) return
+  editingTitle.value = true
+  editedTitle.value = props.column.name
+
+  nextTick(() => {
+    titleRef.value?.focus()
+
+    const range = document.createRange()
+    range.selectNodeContents(titleRef.value!)
+    const selection = window.getSelection()
+    selection?.removeAllRanges()
+    selection?.addRange(range)
+  })
+}
+
+function saveTitle() {
+  const trimmedTitle = (titleRef.value?.innerText ?? '').trim()
+  if (trimmedTitle && trimmedTitle !== props.column.name) {
+    board.updateColumnName(props.column.id, trimmedTitle)
+  }
+  editingTitle.value = false
+}
+
+function cancelEditingTitle() {
+  editedTitle.value = props.column.name
+  editingTitle.value = false
+}
+
+function onTitleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Enter') {
+    e.preventDefault()
+    saveTitle()
+  }
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    cancelEditingTitle()
+  }
+}
 
 function removeColumn() {
   const confirmed = confirm(`Are you sure you want to delete column "${props.column.name}"?`)
@@ -68,6 +111,7 @@ function onCardDelete(cardId: string) {
 }
 
 function toggleDisabled() {
+  onCardCancelled()
   board.toggleDisabled(props.column.id)
 }
 
@@ -96,7 +140,14 @@ function clearAllCards() {
   <div :class="[styles.root, column.disabled && styles.disabled]">
     <div :class="styles.header">
       <div :class="styles.title">
-        <span :class="styles.name">
+        <span
+          ref="titleRef"
+          :class="styles.name"
+          :contenteditable="editingTitle"
+          @dblclick="startEditingTitle"
+          @keydown="onTitleKeydown"
+          @blur="saveTitle"
+        >
           {{ column.name || 'Untitled' }}
         </span>
         {{ column.cards.length }}

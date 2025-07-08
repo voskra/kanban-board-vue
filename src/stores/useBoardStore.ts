@@ -43,6 +43,31 @@ export const useBoardStore = defineStore('board', {
         sort: 'none',
       })
     },
+    removeColumn(columnId: string) {
+      this.columns = this.columns.filter((column) => column.id !== columnId)
+    },
+    updateColumnName(columnId: string, name: string) {
+      const column = this.columns.find((c) => c.id === columnId)
+      if (column) {
+        column.name = name
+      }
+    },
+
+    toggleDisabled(columnId: string) {
+      const findingColumn = this.columns.find((column) => column.id === columnId)
+      if (findingColumn) {
+        findingColumn.disabled = !findingColumn.disabled
+      }
+    },
+
+    addCard(columnId: string, card: Card) {
+      const findingColumn = this.columns.find((column) => column.id === columnId)
+      if (findingColumn) {
+        const maxOrder = Math.max(0, ...findingColumn.cards.map((card) => card.order))
+        card.order = maxOrder + 1
+        findingColumn.cards.push({ ...card, id: crypto.randomUUID() })
+      }
+    },
     updateCard(updatedCard: Card) {
       const findingColumn = this.columns.find((column) =>
         column.cards.some((card) => card.id === updatedCard.id),
@@ -54,27 +79,10 @@ export const useBoardStore = defineStore('board', {
         }
       }
     },
-    removeColumn(columnId: string) {
-      this.columns = this.columns.filter((column) => column.id !== columnId)
-    },
-    toggleDisabled(columnId: string) {
-      const findingColumn = this.columns.find((column) => column.id === columnId)
-      if (findingColumn) {
-        findingColumn.disabled = !findingColumn.disabled
-      }
-    },
     removeCard(cardId: string) {
       const findingColumn = this.columns.find((column) => column.cards.some((c) => c.id === cardId))
       if (findingColumn) {
         findingColumn.cards = findingColumn.cards.filter((card) => card.id !== cardId)
-      }
-    },
-    addCard(columnId: string, card: Card) {
-      const findingColumn = this.columns.find((column) => column.id === columnId)
-      if (findingColumn) {
-        const maxOrder = Math.max(0, ...findingColumn.cards.map((card) => card.order))
-        card.order = maxOrder + 1
-        findingColumn.cards.push({ ...card, id: crypto.randomUUID() })
       }
     },
     removeAllCards(columnId: string) {
