@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from 'vue'
 import styles from './Icon.module.scss'
-import type { IconColor } from "@/types/icon.ts";
+import type { IconColor } from '@/types/icon.ts'
 
 const props = defineProps<{
   name: string
@@ -12,8 +12,5 @@ const iconComponent = defineAsyncComponent(() => import(`@/assets/icons/${props.
 </script>
 
 <template>
-  <component
-      :is="iconComponent"
-      :class="[styles.root, styles[props.color ?? 'black']]"
-  />
+  <component :is="iconComponent" :class="[styles.root, styles[props.color ?? 'black']]" />
 </template>

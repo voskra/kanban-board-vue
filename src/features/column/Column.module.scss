@@ -9,6 +9,18 @@
   border-radius: $border-sm;
   gap: $spacing-16;
   padding: $spacing-16;
+
+  &.disabled {
+    background-color: rgb($color-blue1, 0.5);
+
+    .title {
+      opacity: 0.5;
+    }
+
+    .name {
+      cursor: default;
+    }
+  }
 }
 
 .header {

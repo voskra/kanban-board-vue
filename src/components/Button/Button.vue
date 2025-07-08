@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Icon from '@/components/Icon/Icon.vue'
 import styles from './Button.module.scss'
-import type { IconColor } from "@/types/icon.ts"
+import type { IconColor } from '@/types/icon.ts'
 
 defineProps<{
   text?: string
@@ -18,10 +18,10 @@ defineEmits<{
 
 <template>
   <button
-      :class="[styles.root, styles[type ?? 'outline'], $attrs.class]"
-      :disabled="disabled"
-      v-bind="$attrs"
-      @click="$emit('click')"
+    :class="[styles.root, styles[type ?? 'outline'], $attrs.class]"
+    :disabled="disabled"
+    v-bind="$attrs"
+    @click="$emit('click')"
   >
     <Icon v-if="icon" :name="icon" :color="iconColor" />
 

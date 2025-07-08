@@ -1,5 +1,5 @@
-import type { Column } from "@/types/board.ts";
+import type { Column } from '@/types/board.ts'
 
 export interface State {
-    columns: Column[]
+  columns: Column[]
 }

@@ -10,7 +10,7 @@
   background: $color-white;
   border-radius: 8px;
 
-  &:hover {
+  &:hover:not(.disabled) {
     border-color: $color-blue4;
 
     .draggableButton {
@@ -18,8 +18,13 @@
     }
   }
 
-  &.active {
+  &.active:not(.disabled) {
     border-color: $color-blue4;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: default;
   }
 }
 
@@ -31,7 +36,8 @@
   top: 16px;
 }
 
-.title, .description {
+.title,
+.description {
   line-height: 140%;
   min-height: 20px;
   max-height: 40px;

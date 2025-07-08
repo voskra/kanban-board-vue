@@ -7,6 +7,7 @@ import styles from './Card.module.scss'
 
 const props = defineProps<{
   card: Card
+  disabled: boolean
 }>()
 
 const emit = defineEmits<{
@@ -21,33 +22,42 @@ const editedTitle = ref(props.card.title)
 const editedDescription = ref(props.card.description)
 
 const hasChanges = computed(
-    () =>
-        editedTitle.value !== props.card.title || editedDescription.value !== props.card.description,
+  () =>
+    editedTitle.value !== props.card.title || editedDescription.value !== props.card.description,
 )
 
 watch(
-    () => props.card.isNew,
-    (isNew) => {
-      if (isNew) {
-        startEditing();
-      }
-    },
-    { immediate: true }
+  () => props.card.isNew,
+  (isNew) => {
+    if (isNew) {
+      startEditing()
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => props.disabled,
+  (newVal) => {
+    if (newVal && isEditing.value) {
+      cancel()
+    }
+  },
 )
 
 function startEditing() {
-  if (isEditing.value) {
-    return;
+  if (isEditing.value || props.disabled) {
+    return
   }
 
-    isEditing.value = true
-    nextTick(() => {
-      titleRef.value?.focus()
+  isEditing.value = true
+  nextTick(() => {
+    titleRef.value?.focus()
 
-      if (descRef.value) {
-        descRef.value.innerHTML = props.card.description || ''
-      }
-    })
+    if (descRef.value) {
+      descRef.value.innerHTML = props.card.description || ''
+    }
+  })
 }
 
 function onTitleInput() {
@@ -68,22 +78,22 @@ function save() {
   props.card.isNew = false
 
   isEditing.value = false
+
+  nextTick(() => {
+    descRef.value?.scrollTo(0, 0)
+  })
 }
 
 function cancel() {
   if (props.card.isNew) {
-    const confirmed = confirm('Discard this new card?')
-    if (confirmed) {
-      emit('delete', props.card.id)
-    }
-
-    return
+    emit('delete', props.card.id)
   } else {
     editedTitle.value = props.card.title
 
     nextTick(() => {
       if (descRef.value) {
         descRef.value.innerHTML = props.card.description || ''
+        descRef.value.scrollTo(0, 0)
       }
     })
 
@@ -92,6 +102,10 @@ function cancel() {
 }
 
 function onKeydown(event: KeyboardEvent) {
+  if (document.activeElement === descRef.value && event.key === 'Enter') {
+    return
+  }
+
   if (event.key === 'Enter' && props.card.isNew && editedTitle.value) {
     event.preventDefault()
     save()
@@ -102,7 +116,9 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 function onRightClick() {
-  const confirmed = confirm(`Are you sure you want to delete card "${props.card.title || 'Untitled'}"?`)
+  const confirmed = confirm(
+    `Are you sure you want to delete card "${props.card.title || 'Untitled'}"?`,
+  )
 
   if (confirmed) {
     emit('delete', props.card.id)
@@ -111,37 +127,38 @@ function onRightClick() {
 </script>
 
 <template>
-  <div :class="[styles.root, isEditing && styles.active]"
-       @dblclick="startEditing"
-       @keydown="onKeydown"
-       @contextmenu.prevent="onRightClick"
-       tabindex="0"
+  <div
+    :class="[styles.root, isEditing && styles.active, disabled && styles.disabled]"
+    @dblclick="startEditing"
+    @keydown="onKeydown"
+    @contextmenu.prevent="onRightClick"
+    tabindex="0"
   >
     <div :class="styles.draggableButton">
       <Icon name="dragAndDrop" />
     </div>
 
-    <div :class="[styles.title, !isEditing && styles.display]"
-         :contenteditable="isEditing"
-         ref="titleRef"
-         @input="onTitleInput"
-         @keydown.enter.prevent
+    <div
+      :class="[styles.title, !isEditing && styles.display]"
+      :contenteditable="isEditing"
+      ref="titleRef"
+      @input="onTitleInput"
+      @keydown.enter.prevent
     >
-      {{ isEditing ? editedTitle : (card.title || 'Add title') }}
+      {{ isEditing ? editedTitle : card.title }}
     </div>
-    <div :class="[styles.description, !isEditing && styles.display]"
-         :contenteditable="isEditing"
-         v-html="card.description || 'Add description'"
-         ref="descRef"
-         @input="onDescriptionInput"
+    <div
+      :class="[styles.description, !isEditing && styles.display]"
+      :contenteditable="isEditing"
+      v-html="card.description || 'Add description'"
+      ref="descRef"
+      @input="onDescriptionInput"
     />
     <div v-if="isEditing" :class="styles.actions">
       <Button icon="light" iconColor="blue" @click="save" :disabled="!hasChanges">
         Save Changes
       </Button>
-      <Button icon="minus" @click="cancel">
-        Cancel
-      </Button>
+      <Button icon="minus" @click="cancel"> Cancel </Button>
     </div>
   </div>
 </template>
