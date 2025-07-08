@@ -8,10 +8,13 @@ import styles from './Card.module.scss'
 const props = defineProps<{
   card: Card
   disabled: boolean
+  isNew?: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'delete', id: string): void
+  (e: 'save', card: Card): void
+  (e: 'cancel'): void
 }>()
 
 const isEditing = ref(false)
@@ -27,7 +30,7 @@ const hasChanges = computed(
 )
 
 watch(
-  () => props.card.isNew,
+  () => props.isNew,
   (isNew) => {
     if (isNew) {
       startEditing()
@@ -70,12 +73,21 @@ function onDescriptionInput() {
 
 function save() {
   editedTitle.value = titleRef.value?.innerText.trim() || ''
-  props.card.title = editedTitle.value
 
   editedDescription.value = descRef.value?.innerHTML || ''
-  props.card.description = editedDescription.value
 
-  props.card.isNew = false
+  const newCard = {
+    id: props.card.id || crypto.randomUUID(),
+    title: editedTitle.value,
+    description: editedDescription.value,
+  }
+
+  if (props.isNew) {
+    emit('save', newCard)
+  } else {
+    props.card.title = newCard.title
+    props.card.description = newCard.description
+  }
 
   isEditing.value = false
 
@@ -85,8 +97,8 @@ function save() {
 }
 
 function cancel() {
-  if (props.card.isNew) {
-    emit('delete', props.card.id)
+  if (props.isNew) {
+    emit('cancel')
   } else {
     editedTitle.value = props.card.title
 
@@ -96,9 +108,9 @@ function cancel() {
         descRef.value.scrollTo(0, 0)
       }
     })
-
-    isEditing.value = false
   }
+
+  isEditing.value = false
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -106,7 +118,7 @@ function onKeydown(event: KeyboardEvent) {
     return
   }
 
-  if (event.key === 'Enter' && props.card.isNew && editedTitle.value) {
+  if (event.key === 'Enter') {
     event.preventDefault()
     save()
   } else if (event.key === 'Escape') {
@@ -150,7 +162,7 @@ function onRightClick() {
     <div
       :class="[styles.description, !isEditing && styles.display]"
       :contenteditable="isEditing"
-      v-html="card.description || 'Add description'"
+      v-html="card.description"
       ref="descRef"
       @input="onDescriptionInput"
     />

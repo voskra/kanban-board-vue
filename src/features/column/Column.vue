@@ -3,12 +3,16 @@ import Button from '@/components/Button/Button.vue'
 import Card from '@/features/card/Card.vue'
 import { useBoardStore } from '@/stores/useBoardStore.ts'
 import type { Column } from '@/types/board.ts'
+import type { Card as CardType } from '@/types/card.ts'
 
 import styles from './Column.module.scss'
+import { ref } from 'vue'
 
 const props = defineProps<{
   column: Column
 }>()
+
+const creatingCard = ref(false)
 
 const board = useBoardStore()
 
@@ -25,12 +29,20 @@ function removeCard(id: string) {
 }
 
 function addCard() {
-  props.column.cards.push({
-    id: crypto.randomUUID(),
-    title: '',
-    description: '',
-    isNew: true,
-  })
+  if (creatingCard.value) {
+    return
+  }
+
+  creatingCard.value = true
+}
+
+function onCardSaved(newCard: CardType) {
+  props.column.cards.push(newCard)
+  creatingCard.value = false
+}
+
+function onCardCancelled() {
+  creatingCard.value = false
 }
 
 function toggleDisabled() {
@@ -66,6 +78,14 @@ function toggleDisabled() {
         <template v-for="card in column.cards" :key="card.id">
           <Card :card="card" @delete="removeCard" :disabled="column.disabled" />
         </template>
+
+        <Card
+          v-if="creatingCard"
+          :card="{ id: '', title: '', description: '' }"
+          :isNew="true"
+          @save="onCardSaved"
+          @cancel="onCardCancelled"
+        />
       </div>
 
       <Button
@@ -74,7 +94,7 @@ function toggleDisabled() {
         type="solid"
         :class="styles.newCardButton"
         @click="addCard"
-        :disabled="column.disabled"
+        :disabled="column.disabled || creatingCard"
       >
         New Card
       </Button>
