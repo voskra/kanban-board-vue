@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import type { Card } from '@/types/card.ts'
 import { sortCardsByOrder, sortCardsByTitle } from '@/utils/sorting.ts'
 import { shuffleCardsInColumns, shuffleColumnsInBoard } from '@/utils/shuffle.ts'
+import { getColumns } from '@/utils/stateToLocalStorage.ts'
 
 const initialState: State = {
   globalDisabled: false,
@@ -41,6 +42,12 @@ export const useBoardStore = defineStore('board', {
     },
   },
   actions: {
+    initializeBoard() {
+      console.log(getColumns())
+      const columns = getColumns() ?? initialState.columns
+
+      this.columns = [...columns]
+    },
     addColumn(name?: string) {
       this.columns.push({
         id: crypto.randomUUID(),
